@@ -3,10 +3,10 @@ package br.com.alura.forum.controller.dto.output;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import org.springframework.data.domain.Page;
 
 import br.com.alura.forum.model.topic.domain.Topic;
 import br.com.alura.forum.model.topic.domain.TopicStatus;
@@ -47,7 +47,11 @@ public class TopicBriefOutputDto {
     			.map(TopicBriefOutputDto::new)
     			.collect(Collectors.toList());
     }
-	
+
+
+	public static Page<TopicBriefOutputDto> pagesFromTopics(Page<Topic> topics) {
+		return topics.map(TopicBriefOutputDto::new);
+	}
 	
 	public Long getId() {
 		return id;

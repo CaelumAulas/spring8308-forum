@@ -1,9 +1,11 @@
 package br.com.alura.forum.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,13 +21,16 @@ public class TopicController {
 	private TopicRepository topicRepository;
 	
 	@GetMapping(value="/api/topics", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<TopicBriefOutputDto> list(TopicSearchInputDto topicSearchDto) {
+	public Page<TopicBriefOutputDto> list(TopicSearchInputDto topicSearchDto, 
+		 @PageableDefault(sort = "lastUpdate", direction = Sort.Direction.DESC)	
+			Pageable pageRequest) {
+
 		
 		Specification<Topic> specification = topicSearchDto.buildSpecification();
 		
-		List<Topic> topics = topicRepository.findAll(specification);
+		Page<Topic> topics = topicRepository.findAll(specification, pageRequest);
 		
-		List<TopicBriefOutputDto> dtos = TopicBriefOutputDto.listFromTopics(topics);
+		Page<TopicBriefOutputDto> dtos = TopicBriefOutputDto.pagesFromTopics(topics);
 		
 		return dtos;
 	}
